@@ -16,7 +16,7 @@ Dokumentation und Projektmanagement sind Teil des Projekts.
 - **Dalipovic** → Frontend
 - **Lanzmaier** → Backend
 - **Karner** → Backend
-- **Dietmaier** → Projektmanager
+- **Dietmair** → Projektmanager
 
 ## Technologien
 - **Backend:** Spring Boot (Java, REST-API, evtl. H2-DB)

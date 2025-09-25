@@ -1,4 +1,4 @@
-# 🗓️ Zeitplan – Inventarisierungssystem
+# Zeitplan – Inventarisierungssystem
 
 ## Rahmenbedingungen
 - **Zeitraum:** 1 Semester (ca. 14 Wochen)  

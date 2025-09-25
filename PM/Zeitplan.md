@@ -9,7 +9,7 @@
 
 ---
 
-## 📌 Zeitplan nach Wochen
+## Zeitplan nach Wochen
 
 ### Woche 1–2: Projektstart & Grundlagen
 - Vorstellung des Projekts, Ziele und Rollen klären  
@@ -63,7 +63,7 @@
 
 ---
 
-## ✅ Ergebnisse am Ende
+## Ergebnisse am Ende
 - Funktionierendes Inventarisierungssystem (Frontend + Backend)  
 - Dokumentation in Markdown/PDF  
 - Organisiertes GitHub-Project mit Issues und Milestones  

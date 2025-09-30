@@ -1,0 +1,14 @@
+CREATE TABLE items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    beschreibung TEXT,
+    standort TEXT,
+    inv_nr TEXT UNIQUE,
+    ser_nr TEXT,
+    qr_code TEXT,
+    erstellt_am DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO items (name, beschreibung, standort, inv_nr, ser_nr)
+VALUES ('Laptop HP', '15 Zoll, i5, 8GB RAM', 'Raum 101', 'INV001', 'SN12345');
+

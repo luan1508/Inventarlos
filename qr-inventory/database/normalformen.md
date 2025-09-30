@@ -16,7 +16,7 @@ Typische Informationen könnten sein:
 - Kaufdatum  
 - Preis  
 - Status (aktiv, gelöscht)  
-- evtl. Benutzer, dem das Gerät zugeordnet ist  
+ 
 
 ---
 
@@ -33,8 +33,6 @@ Inventar (
     Kaufdatum,
     Preis,
     Status,
-    BenutzerName,
-    BenutzerAbteilung
 )
 ```
 
@@ -64,14 +62,9 @@ Inventar (
     Kaufdatum,
     Preis,
     Status,
-    BenutzerID (FK)
 )
 
-Benutzer (
-    BenutzerID (PK),
-    BenutzerName,
-    BenutzerAbteilung
-)
+
 ```
 
 ---
@@ -98,7 +91,6 @@ Inventar (
     Kaufdatum,
     Preis,
     Status,
-    BenutzerID (FK)
 )
 
 Kategorie (
@@ -111,11 +103,7 @@ Standort (
     StandortName
 )
 
-Benutzer (
-    BenutzerID (PK),
-    BenutzerName,
-    BenutzerAbteilung
-)
+
 ```
 
 ---
@@ -141,7 +129,6 @@ Inventar (
     Kaufdatum,
     Preis,
     Status,
-    BenutzerID (FK)
 )
 
 Kategorie (
@@ -154,11 +141,7 @@ Standort (
     StandortName
 )
 
-Benutzer (
-    BenutzerID (PK),
-    BenutzerName,
-    BenutzerAbteilung
-)
+
 ```
 
 ---

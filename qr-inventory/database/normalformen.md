@@ -57,7 +57,8 @@ Inventar (
 ```
 Inventar (
     InventarID (PK),
-    Bezeichnung,
+    Name,
+    Beschreibung,
     Kategorie,
     Standort,
     Kaufdatum,
@@ -90,7 +91,8 @@ Aber: *Kategorie* und *Standort* sind Kandidaten für eigene Tabellen (da sie me
 ```
 Inventar (
     InventarID (PK),
-    Bezeichnung,
+    Name,
+    Beschreibung,
     KategorieID (FK),
     StandortID (FK),
     Kaufdatum,
@@ -132,7 +134,8 @@ Kategorien und Standorte haben keine weiteren Attribute → passt.
 ```
 Inventar (
     InventarID (PK),
-    Bezeichnung,
+    Name,
+    Beschreibung,
     KategorieID (FK),
     StandortID (FK),
     Kaufdatum,

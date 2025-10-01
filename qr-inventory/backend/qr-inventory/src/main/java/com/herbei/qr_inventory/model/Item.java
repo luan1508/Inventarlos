@@ -1,9 +1,6 @@
 package com.herbei.qr_inventory.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Item {
@@ -14,8 +11,32 @@ public class Item {
 
     private String name;
     private String beschreibung;
-    private String standort;
+
+    @ManyToOne
+    @JoinColumn(name = "CID")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "location_lid")
+    private Location location;
+
     private String qrCode;
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     // Standard-Konstruktor
     public Item() {}

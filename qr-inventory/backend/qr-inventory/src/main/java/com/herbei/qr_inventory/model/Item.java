@@ -42,10 +42,11 @@ public class Item {
     public Item() {}
 
     // Konstruktor mit Feldern
-    public Item(String name, String beschreibung, String standort, String qrCode) {
+    public Item(String name, String beschreibung, Category category, Location location, String qrCode) {
         this.name = name;
         this.beschreibung = beschreibung;
-        this.standort = standort;
+        this.category = null;
+        this.location = location;
         this.qrCode = qrCode;
     }
 
@@ -59,8 +60,11 @@ public class Item {
     public String getBeschreibung() { return beschreibung; }
     public void setBeschreibung(String beschreibung) { this.beschreibung = beschreibung; }
 
-    public String getStandort() { return standort; }
-    public void setStandort(String standort) { this.standort = standort; }
+    public Category getKategorie() { return category; }
+    public void setKategorie(Category category) { this.category = category; }
+
+    public Location getStandort() { return location; }
+    public void setStandort(Location location) { this.location = location; }
 
     public String getQrCode() { return qrCode; }
     public void setQrCode(String qrCode) { this.qrCode = qrCode; }

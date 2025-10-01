@@ -73,6 +73,7 @@ public class ItemController {
         return itemRepository.findById(id).map(item -> {
             item.setName(updatedItem.getName());
             item.setBeschreibung(updatedItem.getBeschreibung());
+            item.setKategorie(updatedItem.getKategorie());
             item.setStandort(updatedItem.getStandort());
             Item savedItem = itemRepository.save(item);
             return ResponseEntity.ok(savedItem);

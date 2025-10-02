@@ -12,10 +12,7 @@ Typische Informationen könnten sein:
 - Inventar-ID  
 - Name / Bezeichnung  
 - Kategorie (Laptop, Beamer, …)  
-- Standort (Raum, Gebäude)  
-- Kaufdatum  
-- Preis  
-- Status (aktiv, gelöscht)  
+- Standort (Raum, Gebäude)
  
 
 ---
@@ -25,14 +22,11 @@ Typische Informationen könnten sein:
 **Beispiel:**
 
 ```
-Inventar (
+Item (
     InventarID,
     Bezeichnung,
-    Kategorie,
-    Standort,
-    Kaufdatum,
-    Preis,
-    Status,
+    Category,
+    Location,
 )
 ```
 
@@ -53,15 +47,12 @@ Inventar (
 **Schema in 1NF:**
 
 ```
-Inventar (
-    InventarID (PK),
+Item (
+    IID (PK),
     Name,
     Beschreibung,
-    Kategorie,
-    Standort,
-    Kaufdatum,
-    Preis,
-    Status,
+    Categoriy,
+    Location,
 )
 
 
@@ -76,31 +67,28 @@ Inventar (
 - Jedes Nicht-Schlüsselattribut hängt **voll funktional** vom Primärschlüssel ab  
 - Keine Teilabhängigkeiten  
 
-Da `InventarID` ein einfacher Schlüssel ist → keine Teilabhängigkeiten.  
+Da `IID` ein einfacher Schlüssel ist → keine Teilabhängigkeiten.  
 Aber: *Kategorie* und *Standort* sind Kandidaten für eigene Tabellen (da sie mehrfach vorkommen).
 
 **Schema in 2NF:**
 
 ```
-Inventar (
-    InventarID (PK),
+Item (
+    IID (PK),
     Name,
     Beschreibung,
-    KategorieID (FK),
-    StandortID (FK),
-    Kaufdatum,
-    Preis,
-    Status,
+    CID (FK),
+    SID (FK),
 )
 
-Kategorie (
-    KategorieID (PK),
-    Kategoriename
+Category (
+    CID (PK),
+    Name
 )
 
-Standort (
-    StandortID (PK),
-    StandortName
+Location (
+    LID (PK),
+    Name
 )
 
 
@@ -114,31 +102,25 @@ Standort (
 - 2NF erfüllt  
 - Keine transitiven Abhängigkeiten  
 
-Beispiel: `BenutzerAbteilung` hängt von `BenutzerName` ab → bereits korrekt ausgelagert.  
-Kategorien und Standorte haben keine weiteren Attribute → passt.
-
 **Endgültiges Schema (3NF):**
 
 ```
-Inventar (
+Item (
     InventarID (PK),
     Name,
     Beschreibung,
-    KategorieID (FK),
-    StandortID (FK),
-    Kaufdatum,
-    Preis,
-    Status,
+    CID (FK),
+    LID (FK),
 )
 
-Kategorie (
-    KategorieID (PK),
-    Kategoriename
+Category (
+    CID (PK),
+    Name
 )
 
-Standort (
-    StandortID (PK),
-    StandortName
+Location (
+    LID (PK),
+    Name
 )
 
 
@@ -146,5 +128,5 @@ Standort (
 
 ---
 
-✅ Damit ist die Datenbank bis zur **3. Normalform** normalisiert.  
+Damit ist die Datenbank bis zur **3. Normalform** normalisiert.  
 Dies reduziert Redundanz, verbessert Konsistenz und erleichtert Erweiterungen.

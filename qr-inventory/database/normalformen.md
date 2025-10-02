@@ -23,16 +23,12 @@ Typische Informationen könnten sein:
 
 ```
 Item (
-    InventarID,
+    ID,
     Bezeichnung,
     Category,
     Location,
 )
 ```
-
-**Probleme:**
-- Redundanzen (mehrfach gleiche Kategorie, Standort, Abteilung)  
-- Abhängigkeiten zwischen Nicht-Schlüsselattributen (z. B. BenutzerName → BenutzerAbteilung)  
 
 ---
 

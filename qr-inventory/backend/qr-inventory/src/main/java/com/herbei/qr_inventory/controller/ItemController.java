@@ -18,24 +18,28 @@ import java.util.Base64;
 @RestController
 @RequestMapping("/items")
 @CrossOrigin(origins = "*")
-public class ItemController {
+public class ItemController 
+{
 
     private final ItemRepository itemRepository;
     private final QrCodeService qrCodeService;
 
-    public ItemController(ItemRepository itemRepository, QrCodeService qrCodeService) {
+    public ItemController(ItemRepository itemRepository, QrCodeService qrCodeService) 
+    {
         this.itemRepository = itemRepository;
         this.qrCodeService = qrCodeService;
     }
 
     // CREATE
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@RequestBody Item item) {
+    public ResponseEntity<ItemResponse> createItem(@RequestBody Item item) 
+    {
         Item savedItem = itemRepository.save(item);
 
         String qrFilePath = "C:/QR-Inventar/qr-inventory/qrcodes/item-" + savedItem.getId() + ".png";
         String qrText = "http://127.0.0.1:5500/item.html?id=" + savedItem.getId();
-        try {
+        try 
+        {
             qrCodeService.generateQRCodeImage(qrText, 250, 250, qrFilePath);
 
             // Base64 des QR-Code-Bildes erstellen
@@ -56,25 +60,26 @@ public class ItemController {
 
     // READ ALL
     @GetMapping
-    public List<Item> getAllItems() {
-        return itemRepository.findAll();
-    }
+    public List<Item> getAllItems() { return itemRepository.findAll(); }
 
     // READ ONE
     @GetMapping("/{id}")
-    public ResponseEntity<Item> getItemById(@PathVariable Long id) {
+    public ResponseEntity<Item> getItemById(@PathVariable Long id) 
+    {
         Optional<Item> item = itemRepository.findById(id);
         return item.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item updatedItem) {
-        return itemRepository.findById(id).map(item -> {
+    public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item updatedItem) 
+    {
+        return itemRepository.findById(id).map(item -> 
+        {
             item.setName(updatedItem.getName());
             item.setBeschreibung(updatedItem.getBeschreibung());
-            item.setKategorie(updatedItem.getKategorie());
-            item.setStandort(updatedItem.getStandort());
+            item.setCategory(updatedItem.getCategory());
+            item.setLocation(updatedItem.getLocation());
             Item savedItem = itemRepository.save(item);
             return ResponseEntity.ok(savedItem);
         }).orElseGet(() -> ResponseEntity.notFound().build());
@@ -82,42 +87,57 @@ public class ItemController {
 
     // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long id) throws IOException {
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id) throws IOException 
+    {
         Optional<Item> itemOpt = itemRepository.findById(id);
-        if (itemOpt.isPresent()) {
+        if (itemOpt.isPresent()) 
+        {
             Item item = itemOpt.get();
-            if (item.getQrCode() != null) {
+            if (item.getQrCode() != null) 
+            {
                 Files.deleteIfExists(Path.of(item.getQrCode()));
             }
             itemRepository.deleteById(id);
             return ResponseEntity.noContent().build();
-        } else {
+        } 
+        else 
+        {
             return ResponseEntity.notFound().build();
         }
     }
 
     // GET QR-CODE IMAGE
     @GetMapping("/{id}/qrcode")
-    public ResponseEntity<byte[]> getQrCodeImage(@PathVariable Long id) {
+    public ResponseEntity<byte[]> getQrCodeImage(@PathVariable Long id) 
+    {
         Optional<Item> itemOpt = itemRepository.findById(id);
-        if (itemOpt.isEmpty()) {
+        if (itemOpt.isEmpty()) 
+        {
             return ResponseEntity.notFound().build();
         }
+
         Item item = itemOpt.get();
-        if (item.getQrCode() == null || item.getQrCode().isBlank()) {
+        if (item.getQrCode() == null || item.getQrCode().isBlank()) 
+        {
             return ResponseEntity.notFound().build();
         }
-        try {
+        try 
+        {
             byte[] qrBytes = Files.readAllBytes(Path.of(item.getQrCode()));
             return ResponseEntity.ok()
                     .contentType(MediaType.IMAGE_PNG)
                     .body(qrBytes);
-        } catch (IOException e) {
+        } 
+        catch (IOException e) 
+        {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
     // Hilfsklasse für Response mit Base64-Bild
-    public record ItemResponse(Item item, String qrImageBase64) {}
+    public record ItemResponse(Item item, String qrImageBase64) 
+    {
+        // ToDo 
+    }
 }

@@ -3,69 +3,53 @@ package com.herbei.qr_inventory.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Item {
-
+public class Item
+{
+    //#region Attribute
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long ITEMID;
 
-    private String name;
-    private String beschreibung;
-
-    @ManyToOne
-    @JoinColumn(name = "CID")
-    private Category category;
+    private String itemName;
+    private String itemBeschreibung;
+    private String itemQrCode;
 
     @ManyToOne
-    @JoinColumn(name = "location_lid")
-    private Location location;
+    @JoinColumn(name = "Category_ID")
+    private Category category_ID;
 
-    private String qrCode;
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    // Standard-Konstruktor
+    @ManyToOne
+    @JoinColumn(name = "Location_ID")
+    private Location location_ID;
+    //#endregion
+   
+    //#region Konstruktor
     public Item() {}
 
-    // Konstruktor mit Feldern
-    public Item(String name, String beschreibung, Category category, Location location, String qrCode) {
-        this.name = name;
-        this.beschreibung = beschreibung;
-        this.category = null;
-        this.location = location;
-        this.qrCode = qrCode;
+    public Item(String name, String beschreibung, Category category, Location location, String qrCode) 
+    {
+        this.itemName = name;
+        this.itemBeschreibung = beschreibung;
+        this.category_ID = category;
+        this.location_ID = location;
+        this.itemQrCode = qrCode;
     }
+    //#endregion
 
-    // Getter & Setter
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getBeschreibung() { return beschreibung; }
-    public void setBeschreibung(String beschreibung) { this.beschreibung = beschreibung; }
-
-    public Category getKategorie() { return category; }
-    public void setKategorie(Category category) { this.category = category; }
-
-    public Location getStandort() { return location; }
-    public void setStandort(Location location) { this.location = location; }
-
-    public String getQrCode() { return qrCode; }
-    public void setQrCode(String qrCode) { this.qrCode = qrCode; }
+    //#region Getter & Setter
+    public Long getId() { return ITEMID; }
+    public String getName() { return this.itemName; }
+    public String getBeschreibung() { return this.itemBeschreibung; }
+    public Category getCategory()  { return this.category_ID;  }
+    public Location getLocation()  { return this.location_ID; }
+    public String getQrCode() { return this.itemQrCode ; }
+    
+    public void setId(Long id) { this.ITEMID = id; }
+    public void setName(String name) { this.itemName = name; }
+    public void setBeschreibung(String beschreibung) { this.itemBeschreibung = beschreibung; }
+    public void setCategory(Category category) { this.category_ID = category;}
+    public void setLocation(Location location)  { this.location_ID = location; }
+    public void setQrCode(String qrCode) { this.itemQrCode = qrCode; }
+    //#endregion
+    
 }

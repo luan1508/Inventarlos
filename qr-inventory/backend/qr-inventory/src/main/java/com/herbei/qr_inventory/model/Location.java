@@ -1,31 +1,30 @@
 package com.herbei.qr_inventory.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
-public class Location {
+public class Location
+{
+    //#region Attribute
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long LID;
+    private Long LOCATIONID;
 
-    private String name;
+    private String locationName;
+    //#endregion
 
-    public Long getLID() {
-        return LID;
-    }
+    //#region Konstruktoren
+    public Location() {}
 
-    public void setLID(Long LID) {
-        this.LID = LID;
-    }
+    public Location(String name) { this.locationName = name;  }
+    //#endregion
 
-    public String getName() {
-        return name;
-    }
+    //#region Getter & Setter
+    public Long getLID() {  return this.LOCATIONID; }
+    public String getName() { return this.locationName;  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setLID(Long LID) { this.LOCATIONID = LID; }
+    public void setName(String name) { this.locationName = name; }
+    //#endregion
+
 }

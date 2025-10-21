@@ -11,7 +11,7 @@ body{
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
   margin:24px;
   background:var(--bg);
-  color:#111;
+  color:#112;
 }
 
 h1{margin:0 0 12px 0;font-size:1.6rem}

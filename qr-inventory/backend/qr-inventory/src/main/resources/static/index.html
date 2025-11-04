@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR-Inventar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>QR-Inventar</h1>
+
+    <form id="itemForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="text" id="beschreibung" placeholder="Beschreibung" required>
+        <input type="text" id="standort" placeholder="Standort" required>
+        <button type="submit">Item hinzufügen</button>
+    </form>
+
+    <div id="itemsContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

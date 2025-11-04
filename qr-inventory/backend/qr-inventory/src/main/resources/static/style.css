@@ -1,0 +1,103 @@
+:root{
+  --bg:#f7f8fb;
+  --card:#ffffff;
+  --muted:#666;
+  --accent:#0366d6;
+  --danger:#d9534f;
+}
+
+*{box-sizing:border-box}
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  margin:24px;
+  background:var(--bg);
+  color:#112;
+}
+
+h1{margin:0 0 12px 0;font-size:1.6rem}
+
+form#itemForm{
+  display:flex;
+  gap:8px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+form input[type="text"]{
+  padding:8px 10px;
+  border:1px solid #ddd;
+  border-radius:6px;
+  background:#fff;
+  min-width:160px;
+}
+form button[type="submit"], .btn{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:8px 10px;
+  border-radius:6px;
+  cursor:pointer;
+}
+.btn.btn-delete{background:var(--danger)}
+.btn.btn-edit{background:#17a2b8}
+.btn.btn-cancel{background:#888;color:#fff}
+
+.items-table{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--card);
+  box-shadow:0 1px 2px rgba(0,0,0,0.04);
+}
+.items-table th, .items-table td{
+  padding:10px 12px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+  vertical-align:middle;
+}
+.items-table thead th{
+  background:#fafafa;
+  font-weight:600;
+}
+.actions-cell button{margin-right:6px}
+
+.qr-overlay{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.45);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .15s ease;
+  z-index:1200;
+}
+.qr-overlay.open{opacity:1;pointer-events:auto}
+.qr-modal{
+  background:var(--card);
+  padding:16px;
+  border-radius:8px;
+  box-shadow:0 8px 30px rgba(2,6,23,0.2);
+  max-width:90%;
+  max-height:90%;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  align-items:center;
+}
+.qr-modal img{max-width:380px;max-height:70vh}
+.qr-close{
+  position:absolute;
+  right:20px;
+  top:16px;
+  background:transparent;
+  color:#fff;
+  border:none;
+  font-size:28px;
+  cursor:pointer;
+}
+.error{color:var(--danger)}
+/* responsive */
+@media (max-width:640px){
+  form#itemForm{flex-direction:column}
+  .items-table th, .items-table td{padding:8px}
+}

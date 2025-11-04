@@ -1,4 +1,4 @@
-const API = 'http://localhost:8080/items';
+const API = '/items';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('itemForm');

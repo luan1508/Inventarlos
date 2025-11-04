@@ -17,7 +17,7 @@ import java.util.Base64;
 
 @RestController
 @RequestMapping("/items")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class ItemController 
 {
 
@@ -32,22 +32,29 @@ public class ItemController
 
     // CREATE
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@RequestBody Item item) 
-    {
+    public ResponseEntity<ItemResponse> createItem(@RequestBody Item item) {
+
         Item savedItem = itemRepository.save(item);
 
-        String qrFilePath = "C:/QR-Inventar/qr-inventory/qrcodes/item-" + savedItem.getId() + ".png";
-        String qrText = "http://127.0.0.1:5500/item.html?id=" + savedItem.getId();
-        try 
+        try
         {
+            String baseDir = System.getProperty("user.dir");
+            Path qrFolder = Path.of(baseDir, "qrcodes");
+            Files.createDirectories(qrFolder);
+
+            System.out.println("PATH: " +qrFolder);
+
+            String qrFilePath = qrFolder.resolve("item-" + savedItem.getId() + ".png").toString();
+
+            String qrText = "http://localhost:8080/item.html?id=" + savedItem.getId();
+
             qrCodeService.generateQRCodeImage(qrText, 250, 250, qrFilePath);
 
-            // Base64 des QR-Code-Bildes erstellen
             byte[] qrBytes = Files.readAllBytes(Path.of(qrFilePath));
             String qrBase64 = Base64.getEncoder().encodeToString(qrBytes);
 
             savedItem.setQrCode(qrFilePath);
-            itemRepository.save(savedItem); // Pfad speichern
+            itemRepository.save(savedItem);
 
             ItemResponse response = new ItemResponse(savedItem, qrBase64);
             return ResponseEntity.ok(response);
@@ -57,6 +64,8 @@ public class ItemController
             return ResponseEntity.internalServerError().build();
         }
     }
+
+
 
     // READ ALL
     @GetMapping

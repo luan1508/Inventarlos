@@ -12,7 +12,18 @@
     <form id="itemForm">
         <input type="text" id="name" placeholder="Name" required>
         <input type="text" id="beschreibung" placeholder="Beschreibung" required>
-        <input type="text" id="standort" placeholder="Standort" required>
+        <select name="Standort" id="locationName">
+            <option value="5BIT">5BIT</option>
+            <option value="5AIT">5AIT</option>
+            <option value="Lehrerzimmer">Lehrerzimmer</option>
+            <option value="3RL">3RL</option>
+        </select>
+        <select name="Kategorie" id="categoryName">
+            <option value="Möbel">Möbel</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Lebensmittel">Lebensmittel</option>
+            <option value="Werkzeug">Werkzeug</option>
+        </select>
         <button type="submit">Item hinzufügen</button>
     </form>
 

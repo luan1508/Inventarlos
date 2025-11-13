@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('itemForm');
     const nameInput = document.getElementById('name');
     const beschreibungInput = document.getElementById('beschreibung');
-    const standortInput = document.getElementById('standort');
+    const standortInput = document.getElementById('locationName');
+    const categoryInput = document.getElementById('categoryName');
     const itemsContainer = document.getElementById('itemsContainer');
 
     let editingId = null;
@@ -19,7 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const payload = {
             name: nameInput.value.trim(),
             beschreibung: beschreibungInput.value.trim(),
-            standort: standortInput.value.trim()
+            locationName: standortInput.value.trim(),
+            categoryName: categoryInput.value.trim()
         };
         try {
             if (editingId) {
@@ -72,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <th>Name</th>
                 <th>Beschreibung</th>
                 <th>Standort</th>
+                <th>Kategorie</th>
                 <th>QR</th>
                 <th>Aktionen</th>
             </tr>`;
@@ -79,12 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const tbody = document.createElement('tbody');
         for (const it of items) {
+            console.log(it)
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${escapeHtml(it.id)}</td>
                 <td>${escapeHtml(it.name || '')}</td>
                 <td>${escapeHtml(it.beschreibung || '')}</td>
-                <td>${escapeHtml(it.standort || '')}</td>
+                <td>${escapeHtml(it.location?.lname || it.location?.name || it.location || '')}</td>
+                <td>${escapeHtml(it.category?.name || '')}</td>
                 <td class="qr-cell"></td>
                 <td class="actions-cell"></td>
             `;
@@ -123,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editingId = item.id;
         nameInput.value = item.name || '';
         beschreibungInput.value = item.beschreibung || '';
-        standortInput.value = item.standort || '';
+        standortInput.value = item.location || '';
         form.querySelector('button[type="submit"]').textContent = 'Speichern';
         cancelBtn.style.display = 'inline-block';
         nameInput.focus();

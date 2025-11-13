@@ -27,4 +27,12 @@ public class Category
     public void setName(String name) { this.categoryName = name; }
     //#endregion
 
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "CATEGORYID=" + CATEGORYID +
+                ", categoryName='" + categoryName + '\'' +
+                '}';
+    }
 }

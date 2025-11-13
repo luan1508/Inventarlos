@@ -51,5 +51,17 @@ public class Item
     public void setLocation(Location location)  { this.location_ID = location; }
     public void setQrCode(String qrCode) { this.itemQrCode = qrCode; }
     //#endregion
-    
+
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "ITEMID=" + ITEMID +
+                ", itemName='" + itemName + '\'' +
+                ", itemBeschreibung='" + itemBeschreibung + '\'' +
+                ", itemQrCode='" + itemQrCode + '\'' +
+                ", category_ID=" + category_ID +
+                ", location_ID=" + location_ID +
+                '}';
+    }
 }

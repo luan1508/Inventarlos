@@ -1,7 +1,12 @@
 package com.herbei.qr_inventory.controller;
 
+import com.herbei.qr_inventory.model.Category;
 import com.herbei.qr_inventory.model.Item;
+import com.herbei.qr_inventory.model.ItemRequest;
+import com.herbei.qr_inventory.model.Location;
+import com.herbei.qr_inventory.repository.CategoryRepository;
 import com.herbei.qr_inventory.repository.ItemRepository;
+import com.herbei.qr_inventory.repository.LocationRepository;
 import com.herbei.qr_inventory.service.QrCodeService;
 import com.google.zxing.WriterException;
 import org.springframework.http.MediaType;
@@ -12,27 +17,55 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Base64;
 
 @RestController
 @RequestMapping("/items")
 //@CrossOrigin(origins = "*")
-public class ItemController 
+public class ItemController
 {
 
+    private final CategoryRepository categoryRepository;
+    private final LocationRepository locationRepository;
     private final ItemRepository itemRepository;
     private final QrCodeService qrCodeService;
 
-    public ItemController(ItemRepository itemRepository, QrCodeService qrCodeService) 
+    public ItemController(CategoryRepository categoryRepository, LocationRepository locationRepository, ItemRepository itemRepository, QrCodeService qrCodeService)
     {
+        this.categoryRepository = categoryRepository;
+        this.locationRepository = locationRepository;
         this.itemRepository = itemRepository;
         this.qrCodeService = qrCodeService;
     }
 
+    @PostMapping("/location")
+    public ResponseEntity<Location> createItem(@RequestBody Location location) {
+        Location location1 = locationRepository.save(location);
+        return ResponseEntity.ok().body(location1);
+    }
+
+    @PostMapping("/category")
+    public ResponseEntity<Category> createItem(@RequestBody Category category) {
+        Category category1 = categoryRepository.save(category);
+        return ResponseEntity.ok().body(category1);
+    }
+
     // CREATE
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@RequestBody Item item) {
+    public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest request) {
+        System.out.println(request.toString());
+        Location location = locationRepository.findByLocationName(request.getLocationName()).orElse(null);
+        System.out.println(location.toString());
+        Category category = categoryRepository.findByCategoryName(request.getCategoryName()).orElse(null);
+        System.out.println(category.toString());
+
+        Item item = new Item();
+        item.setName(request.getName());
+        item.setBeschreibung(request.getBeschreibung());
+        item.setLocation(location);
+        item.setCategory(category);
 
         Item savedItem = itemRepository.save(item);
 
@@ -73,7 +106,7 @@ public class ItemController
 
     // READ ONE
     @GetMapping("/{id}")
-    public ResponseEntity<Item> getItemById(@PathVariable Long id) 
+    public ResponseEntity<Item> getItemById(@PathVariable Long id)
     {
         Optional<Item> item = itemRepository.findById(id);
         return item.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -81,9 +114,9 @@ public class ItemController
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item updatedItem) 
+    public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item updatedItem)
     {
-        return itemRepository.findById(id).map(item -> 
+        return itemRepository.findById(id).map(item ->
         {
             item.setName(updatedItem.getName());
             item.setBeschreibung(updatedItem.getBeschreibung());
@@ -96,20 +129,20 @@ public class ItemController
 
     // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long id) throws IOException 
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id) throws IOException
     {
         Optional<Item> itemOpt = itemRepository.findById(id);
-        if (itemOpt.isPresent()) 
+        if (itemOpt.isPresent())
         {
             Item item = itemOpt.get();
-            if (item.getQrCode() != null) 
+            if (item.getQrCode() != null)
             {
                 Files.deleteIfExists(Path.of(item.getQrCode()));
             }
             itemRepository.deleteById(id);
             return ResponseEntity.noContent().build();
-        } 
-        else 
+        }
+        else
         {
             return ResponseEntity.notFound().build();
         }
@@ -117,27 +150,27 @@ public class ItemController
 
     // GET QR-CODE IMAGE
     @GetMapping("/{id}/qrcode")
-    public ResponseEntity<byte[]> getQrCodeImage(@PathVariable Long id) 
+    public ResponseEntity<byte[]> getQrCodeImage(@PathVariable Long id)
     {
         Optional<Item> itemOpt = itemRepository.findById(id);
-        if (itemOpt.isEmpty()) 
+        if (itemOpt.isEmpty())
         {
             return ResponseEntity.notFound().build();
         }
 
         Item item = itemOpt.get();
-        if (item.getQrCode() == null || item.getQrCode().isBlank()) 
+        if (item.getQrCode() == null || item.getQrCode().isBlank())
         {
             return ResponseEntity.notFound().build();
         }
-        try 
+        try
         {
             byte[] qrBytes = Files.readAllBytes(Path.of(item.getQrCode()));
             return ResponseEntity.ok()
                     .contentType(MediaType.IMAGE_PNG)
                     .body(qrBytes);
-        } 
-        catch (IOException e) 
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -145,8 +178,8 @@ public class ItemController
     }
 
     // Hilfsklasse für Response mit Base64-Bild
-    public record ItemResponse(Item item, String qrImageBase64) 
+    public record ItemResponse(Item item, String qrImageBase64)
     {
-        // ToDo 
+        // ToDo
     }
 }

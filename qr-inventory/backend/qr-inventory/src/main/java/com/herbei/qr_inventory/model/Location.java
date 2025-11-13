@@ -27,4 +27,12 @@ public class Location
     public void setName(String name) { this.locationName = name; }
     //#endregion
 
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "LOCATIONID=" + LOCATIONID +
+                ", locationName='" + locationName + '\'' +
+                '}';
+    }
 }

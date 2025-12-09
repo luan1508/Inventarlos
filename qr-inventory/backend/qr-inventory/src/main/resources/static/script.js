@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="actions-cell"></td>
             `;
 
+
             // QR-Button
             const qrCell = tr.querySelector('.qr-cell');
             const qrBtn = document.createElement('button');
@@ -128,7 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
         editingId = item.id;
         nameInput.value = item.name || '';
         beschreibungInput.value = item.beschreibung || '';
-        standortInput.value = item.location || '';
+        standortInput.value = item.location?.name || '';
+        categoryInput.value = item.category?.name || '';
         form.querySelector('button[type="submit"]').textContent = 'Speichern';
         cancelBtn.style.display = 'inline-block';
         nameInput.focus();
@@ -243,5 +245,38 @@ document.addEventListener('DOMContentLoaded', () => {
             .replaceAll('>', '&gt;')
             .replaceAll('"', '&quot;')
             .replaceAll("'", '&#039;');
+    }
+
+    standortInput.addEventListener('click', function () {
+        if (standortInput && !standortInput.options.length > 0) {
+            fillSelects("location");
+        }
+    });
+
+    categoryInput.addEventListener('click', function () {
+        if (categoryInput && !categoryInput.options.length > 0) {
+            fillSelects("category");
+        }
+    });
+
+    let isFilled
+    async function fillSelects(input){
+        const response=await fetch(`${API}/${input}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data=await response.json();
+        for(let i in data) {
+
+            const option = document.createElement('option');
+            option.value = data[i]["name"];
+            option.textContent = data[i]["name"];
+            if(input==="location") {
+                standortInput.appendChild(option);
+            } else {
+                categoryInput.appendChild(option);
+            }
+
+        }
     }
 });

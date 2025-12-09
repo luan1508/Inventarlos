@@ -52,14 +52,24 @@ public class ItemController
         return ResponseEntity.ok().body(category1);
     }
 
+    @GetMapping("/location")
+    public List<Location> getLocations() {
+        return locationRepository.findAll();
+    }
+
+    @GetMapping("/category")
+    public List<Category> getCategories() {
+        return categoryRepository.findAll();
+    }
+
     // CREATE
     @PostMapping
     public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest request) {
-        System.out.println(request.toString());
+
+
         Location location = locationRepository.findByLocationName(request.getLocationName()).orElse(null);
-        System.out.println(location.toString());
+
         Category category = categoryRepository.findByCategoryName(request.getCategoryName()).orElse(null);
-        System.out.println(category.toString());
 
         Item item = new Item();
         item.setName(request.getName());
@@ -114,14 +124,18 @@ public class ItemController
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item updatedItem)
+    public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody ItemRequest updatedItem)
     {
         return itemRepository.findById(id).map(item ->
         {
+
+            Location location = locationRepository.findByLocationName(updatedItem.getLocationName()).orElse(null);
+
+            Category category = categoryRepository.findByCategoryName(updatedItem.getCategoryName()).orElse(null);
             item.setName(updatedItem.getName());
             item.setBeschreibung(updatedItem.getBeschreibung());
-            item.setCategory(updatedItem.getCategory());
-            item.setLocation(updatedItem.getLocation());
+            item.setCategory(category);
+            item.setLocation(location);
             Item savedItem = itemRepository.save(item);
             return ResponseEntity.ok(savedItem);
         }).orElseGet(() -> ResponseEntity.notFound().build());

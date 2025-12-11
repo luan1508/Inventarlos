@@ -16,9 +16,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class QrCodeService {
+public class QrCodeService
+{
 
-    public void generateQRCodeImage(String text, int width, int height, String filePath) throws WriterException, IOException {
+    public void generateQRCodeImage(String text, int width, int height, String filePath) throws WriterException, IOException
+    {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
 
@@ -26,7 +28,8 @@ public class QrCodeService {
         MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
     }
 
-    public byte[] generateQRCodeBytes(String text, int width, int height) throws WriterException, IOException {
+    public byte[] generateQRCodeBytes(String text, int width, int height) throws WriterException, IOException
+    {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
 

@@ -27,11 +27,16 @@ import java.util.Base64;
 public class ItemController
 {
 
+    //#region Attribute
+
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
     private final ItemRepository itemRepository;
     private final QrCodeService qrCodeService;
 
+    //#endregion
+
+    //#region Konstruktor
     public ItemController(CategoryRepository categoryRepository, LocationRepository locationRepository, ItemRepository itemRepository, QrCodeService qrCodeService)
     {
         this.categoryRepository = categoryRepository;
@@ -39,17 +44,22 @@ public class ItemController
         this.itemRepository = itemRepository;
         this.qrCodeService = qrCodeService;
     }
+    //#endregion
 
+
+    //#region MappingFunctions
     @PostMapping("/location")
-    public ResponseEntity<Location> createItem(@RequestBody Location location) {
-        Location location1 = locationRepository.save(location);
-        return ResponseEntity.ok().body(location1);
+    public ResponseEntity<Location> createItem(@RequestBody Location location)
+    {
+        Location _responeLocation = locationRepository.save(location);
+        return ResponseEntity.ok().body(_responeLocation);
     }
 
     @PostMapping("/category")
-    public ResponseEntity<Category> createItem(@RequestBody Category category) {
-        Category category1 = categoryRepository.save(category);
-        return ResponseEntity.ok().body(category1);
+    public ResponseEntity<Category> createItem(@RequestBody Category category)
+    {
+        Category _responseCategory = categoryRepository.save(category);
+        return ResponseEntity.ok().body(_responseCategory);
     }
 
     @GetMapping("/location")
@@ -66,16 +76,14 @@ public class ItemController
     @PostMapping
     public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest request) {
 
-
-        Location location = locationRepository.findByLocationName(request.getLocationName()).orElse(null);
-
-        Category category = categoryRepository.findByCategoryName(request.getCategoryName()).orElse(null);
+        Location _locationResponse = locationRepository.findByLocationName(request.getLocationName()).orElse(null);
+        Category _categoryResponse = categoryRepository.findByCategoryName(request.getCategoryName()).orElse(null);
 
         Item item = new Item();
         item.setName(request.getName());
         item.setBeschreibung(request.getBeschreibung());
-        item.setLocation(location);
-        item.setCategory(category);
+        item.setLocation(_locationResponse);
+        item.setCategory(_categoryResponse);
 
         Item savedItem = itemRepository.save(item);
 
@@ -89,7 +97,7 @@ public class ItemController
 
             String qrFilePath = qrFolder.resolve("item-" + savedItem.getId() + ".png").toString();
 
-            String qrText = "http://localhost:8080/item.html?id=" + savedItem.getId();
+            String qrText = "https://www.youtube.com/watch?v=xvFZjo5PgG0&list=RDxvFZjo5PgG0&start_radio=1"; //+ savedItem.getId();
 
             qrCodeService.generateQRCodeImage(qrText, 250, 250, qrFilePath);
 
@@ -107,8 +115,6 @@ public class ItemController
             return ResponseEntity.internalServerError().build();
         }
     }
-
-
 
     // READ ALL
     @GetMapping
@@ -128,14 +134,13 @@ public class ItemController
     {
         return itemRepository.findById(id).map(item ->
         {
+            Location _locationResponse = locationRepository.findByLocationName(updatedItem.getLocationName()).orElse(null);
+            Category _categoryResponse = categoryRepository.findByCategoryName(updatedItem.getCategoryName()).orElse(null);
 
-            Location location = locationRepository.findByLocationName(updatedItem.getLocationName()).orElse(null);
-
-            Category category = categoryRepository.findByCategoryName(updatedItem.getCategoryName()).orElse(null);
             item.setName(updatedItem.getName());
             item.setBeschreibung(updatedItem.getBeschreibung());
-            item.setCategory(category);
-            item.setLocation(location);
+            item.setCategory(_categoryResponse);
+            item.setLocation(_locationResponse);
             Item savedItem = itemRepository.save(item);
             return ResponseEntity.ok(savedItem);
         }).orElseGet(() -> ResponseEntity.notFound().build());
@@ -190,6 +195,7 @@ public class ItemController
             return ResponseEntity.internalServerError().build();
         }
     }
+    //#endregion
 
     // Hilfsklasse für Response mit Base64-Bild
     public record ItemResponse(Item item, String qrImageBase64)

@@ -12,13 +12,14 @@
     <form id="itemForm">
         <input type="text" id="name" placeholder="Name" required>
         <input type="text" id="beschreibung" placeholder="Beschreibung" required>
-        <select name="Standort" id="locationName">
 
-        </select>
-        <select name="Kategorie" id="categoryName">
+        <select name="Standort" id="locationName"></select>
+        <button class="addButton" id="locationAdd">+</button>
 
-        </select>
-        <button type="submit">Item hinzufügen</button>
+        <select name="Kategorie" id="categoryName"></select>
+        <button class="addButton" id="categoryAdd">+</button>
+
+        <button id="submitBtn" type="submit">Item hinzufügen</button>
     </form>
 
     <div id="itemsContainer"></div>

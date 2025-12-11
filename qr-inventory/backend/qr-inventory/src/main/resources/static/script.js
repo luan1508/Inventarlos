@@ -1,6 +1,7 @@
 const API = '/items';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () =>
+{
     const form = document.getElementById('itemForm');
     const nameInput = document.getElementById('name');
     const beschreibungInput = document.getElementById('beschreibung');
@@ -15,51 +16,69 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrModal = createQrModal();
     document.body.appendChild(qrModal.overlay);
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit',
+    async (e) =>
+    {
         e.preventDefault();
-        const payload = {
+        const payload =
+        {
             name: nameInput.value.trim(),
             beschreibung: beschreibungInput.value.trim(),
             locationName: standortInput.value.trim(),
             categoryName: categoryInput.value.trim()
         };
-        try {
-            if (editingId) {
+        try
+        {
+            if (editingId)
+            {
                 await updateItem(editingId, payload);
-            } else {
+            }
+            else
+            {
                 await createItem(payload);
             }
             resetForm();
             await fetchAndRender();
-        } catch (err) {
+        }
+        catch (err)
+        {
             console.error(err);
             alert('Fehler beim Speichern des Items.');
         }
     });
 
-    cancelBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        resetForm();
-    });
+    cancelBtn.addEventListener('click',
+        (e) =>
+        {
+            e.preventDefault();
+            resetForm();
+        }
+    );
 
     // initial load
     fetchAndRender();
 
     // functions
-    async function fetchAndRender() {
-        try {
+    async function fetchAndRender()
+    {
+        try
+        {
             const res = await fetch(API);
             if (!res.ok) throw new Error('Fehler beim Laden der Items');
             const items = await res.json();
             renderTable(items);
-        } catch (err) {
+        }
+        catch (err)
+        {
             console.error(err);
             itemsContainer.innerHTML = '<p class="error">Konnte Items nicht laden.</p>';
         }
     }
 
-    function renderTable(items) {
-        if (!Array.isArray(items) || items.length === 0) {
+    function renderTable(items)
+    {
+        if (!Array.isArray(items) || items.length === 0)
+        {
             itemsContainer.innerHTML = '<p>Keine Items vorhanden.</p>';
             return;
         }
@@ -81,7 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
         table.appendChild(thead);
 
         const tbody = document.createElement('tbody');
-        for (const it of items) {
+
+        for (const it of items)
+        {
             console.log(it)
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -125,7 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
         itemsContainer.appendChild(table);
     }
 
-    function startEdit(item) {
+    function startEdit(item)
+    {
         editingId = item.id;
         nameInput.value = item.name || '';
         beschreibungInput.value = item.beschreibung || '';
@@ -136,15 +158,19 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.focus();
     }
 
-    function resetForm() {
+    function resetForm()
+    {
         editingId = null;
         form.reset();
         form.querySelector('button[type="submit"]').textContent = 'Item hinzufügen';
         cancelBtn.style.display = 'none';
     }
 
-    async function createItem(payload) {
-        const res = await fetch(API, {
+    async function createItem(payload)
+    {
+        const res = await fetch
+        (API,
+        {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -154,8 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return res.json().catch(() => null);
     }
 
-    async function updateItem(id, payload) {
-        const res = await fetch(`${API}/${id}`, {
+    async function updateItem(id, payload)
+    {
+        const res = await fetch(`${API}/${id}`,
+        {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -164,26 +192,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return res.json().catch(() => null);
     }
 
-    async function deleteItemWithConfirm(id) {
+    async function deleteItemWithConfirm(id)
+    {
         if (!confirm('Item wirklich löschen?')) return;
-        try {
+        try
+        {
             const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
-            if (res.status === 204) {
+            if (res.status === 204)
+            {
                 await fetchAndRender();
-            } else {
+            }
+            else
+            {
                 throw new Error('Löschen fehlgeschlagen');
             }
-        } catch (err) {
+        }
+        catch (err)
+        {
             console.error(err);
             alert('Fehler beim Löschen.');
         }
     }
 
-    async function showQr(id) {
-        try {
+    async function showQr(id)
+    {
+        try
+        {
             const res = await fetch(`${API}/${id}/qrcode`);
-            if (!res.ok) {
-                if (res.status === 404) {
+            if (!res.ok)
+            {
+                if (res.status === 404)
+                {
                     alert('Kein QR-Code vorhanden.');
                     return;
                 }
@@ -194,7 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
             qrModal.img.src = url;
             qrModal.overlay.classList.add('open');
             // revoke URL when modal closes
-            qrModal.cleanup = () => {
+            qrModal.cleanup = () =>
+            {
                 URL.revokeObjectURL(url);
             };
         } catch (err) {
@@ -203,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function createCancelButton() {
+    function createCancelButton()
+    {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.textContent = 'Abbrechen';
@@ -212,7 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return btn;
     }
 
-    function createQrModal() {
+    function createQrModal()
+    {
         const overlay = document.createElement('div');
         overlay.className = 'qr-overlay';
         overlay.innerHTML = `
@@ -223,12 +265,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const img = overlay.querySelector('.qr-image');
         const closeBtn = overlay.querySelector('.qr-close');
 
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) close();
-        });
+        overlay.addEventListener('click',
+            (e) =>
+            {
+                if (e.target === overlay) close();
+            }
+        );
         closeBtn.addEventListener('click', close);
 
-        function close() {
+        function close()
+        {
             overlay.classList.remove('open');
             if (modal.cleanup) modal.cleanup();
             img.src = '';
@@ -238,7 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return modal;
     }
 
-    function escapeHtml(text) {
+    function escapeHtml(text)
+    {
         return String(text)
             .replaceAll('&', '&amp;')
             .replaceAll('<', '&lt;')
@@ -247,33 +294,43 @@ document.addEventListener('DOMContentLoaded', () => {
             .replaceAll("'", '&#039;');
     }
 
-    standortInput.addEventListener('click', function () {
-        if (standortInput && !standortInput.options.length > 0) {
+    standortInput.addEventListener('click', function ()
+    {
+        if (standortInput && !standortInput.options.length > 0)
+        {
             fillSelects("location");
         }
     });
 
-    categoryInput.addEventListener('click', function () {
-        if (categoryInput && !categoryInput.options.length > 0) {
+    categoryInput.addEventListener('click', function ()
+    {
+        if (categoryInput && !categoryInput.options.length > 0)
+        {
             fillSelects("category");
         }
     });
 
     let isFilled
-    async function fillSelects(input){
-        const response=await fetch(`${API}/${input}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
+    async function fillSelects(input)
+    {
+        const response = await fetch
+        (`${API}/${input}`,
+            {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            }
+        );
         const data=await response.json();
-        for(let i in data) {
-
+        for(let i in data)
+        {
             const option = document.createElement('option');
             option.value = data[i]["name"];
             option.textContent = data[i]["name"];
-            if(input==="location") {
+            if(input==="location")
+            {
                 standortInput.appendChild(option);
-            } else {
+            } else
+            {
                 categoryInput.appendChild(option);
             }
 

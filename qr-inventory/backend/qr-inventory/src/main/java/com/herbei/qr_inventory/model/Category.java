@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 @Entity
 public class Category 
 {
-
     //#region Attribute
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,15 +20,16 @@ public class Category
     //#endregion
 
     //#region Getter & Setter
-    public Long getCID() { return this.CATEGORYID; }
     public String getName() { return categoryName; }
-    public void setCID(Long categoryID) {  this.CATEGORYID = categoryID; }
+    public Long getCID() { return this.CATEGORYID; }
     public void setName(String name) { this.categoryName = name; }
+    public void setCID(Long categoryID) {  this.CATEGORYID = categoryID; }
     //#endregion
 
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Category{" +
                 "CATEGORYID=" + CATEGORYID +
                 ", categoryName='" + categoryName + '\'' +

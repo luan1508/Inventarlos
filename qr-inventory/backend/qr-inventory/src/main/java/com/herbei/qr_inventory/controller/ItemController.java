@@ -74,8 +74,8 @@ public class ItemController
 
     // CREATE
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest request) {
-
+    public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest request)
+    {
         Location _locationResponse = locationRepository.findByLocationName(request.getLocationName()).orElse(null);
         Category _categoryResponse = categoryRepository.findByCategoryName(request.getCategoryName()).orElse(null);
 
@@ -89,11 +89,10 @@ public class ItemController
 
         try
         {
-            String baseDir = System.getProperty("user.dir");
-            Path qrFolder = Path.of(baseDir, "qrcodes");
+            Path qrFolder = Path.of("qrcodes");
             Files.createDirectories(qrFolder);
 
-            System.out.println("PATH: " +qrFolder);
+            System.out.println("PATH: " + qrFolder);
 
             String qrFilePath = qrFolder.resolve("item-" + savedItem.getId() + ".png").toString();
 

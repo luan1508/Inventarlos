@@ -13,6 +13,7 @@ public class ItemRequest
     public String getName() {
         return name;
     }
+
     public String getBeschreibung() {
         return beschreibung;
     }

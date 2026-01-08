@@ -9,6 +9,7 @@ import com.herbei.qr_inventory.repository.ItemRepository;
 import com.herbei.qr_inventory.repository.LocationRepository;
 import com.herbei.qr_inventory.service.QrCodeService;
 import com.google.zxing.WriterException;
+import org.hibernate.annotations.Fetch;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,6 @@ import java.util.Base64;
 //@CrossOrigin(origins = "*")
 public class ItemController
 {
-
     //#region Attribute
 
     private final CategoryRepository categoryRepository;
@@ -45,7 +45,6 @@ public class ItemController
         this.qrCodeService = qrCodeService;
     }
     //#endregion
-
 
     //#region MappingFunctions
     @PostMapping("/location")

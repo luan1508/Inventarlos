@@ -58,6 +58,56 @@ document.addEventListener('DOMContentLoaded', () =>
     // initial load
     fetchAndRender();
 
+    fillSelects("location");
+    fillSelects("category");
+
+    standortInput.addEventListener('click', function ()
+    {
+        if (standortInput && !standortInput.options.length > 0)
+        {
+            fillSelects("location");
+        }
+    });
+
+    categoryInput.addEventListener('click', function ()
+    {
+        if (categoryInput && !categoryInput.options.length > 0)
+        {
+            fillSelects("category");
+        }
+    });
+
+   let isFilled
+   async function fillSelects(input)
+   {
+       const response = await fetch
+       (`${API}/${input}`,
+           {
+               method: 'GET',
+               headers: { 'Content-Type': 'application/json' }
+           }
+       );
+       const data = await response.json();
+
+       //DEBUG HILFE
+       console.log(data);
+
+       for(let i in data)
+       {
+           const option = document.createElement('option');
+           option.value = data[i]["name"];
+           option.textContent = data[i]["name"];
+           if(input==="location")
+           {
+               standortInput.appendChild(option);
+           } else
+           {
+               categoryInput.appendChild(option);
+           }
+
+       }
+   }
+
     // functions
     async function fetchAndRender()
     {
@@ -294,46 +344,4 @@ document.addEventListener('DOMContentLoaded', () =>
             .replaceAll("'", '&#039;');
     }
 
-    standortInput.addEventListener('click', function ()
-    {
-        if (standortInput && !standortInput.options.length > 0)
-        {
-            fillSelects("location");
-        }
-    });
-
-    categoryInput.addEventListener('click', function ()
-    {
-        if (categoryInput && !categoryInput.options.length > 0)
-        {
-            fillSelects("category");
-        }
-    });
-
-    let isFilled
-    async function fillSelects(input)
-    {
-        const response = await fetch
-        (`${API}/${input}`,
-            {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            }
-        );
-        const data=await response.json();
-        for(let i in data)
-        {
-            const option = document.createElement('option');
-            option.value = data[i]["name"];
-            option.textContent = data[i]["name"];
-            if(input==="location")
-            {
-                standortInput.appendChild(option);
-            } else
-            {
-                categoryInput.appendChild(option);
-            }
-
-        }
-    }
 });

@@ -11,13 +11,13 @@
 
     <form id="itemForm">
         <input type="text" id="name" placeholder="Name" required>
-        <input type="text" id="beschreibung" placeholder="Beschreibung" required>
+        <input type="text" id="beschreibung" placeholder="Beschreibung">
 
-        <select name="Standort" id="locationName"></select>
-        <button class="addButton" id="locationAdd">+</button>
+        <select name="Standort" id="locationName" required></select>
+        <button type="button" class="addButton" id="locationAdd" aria-label="Standort hinzufügen">+</button>
 
-        <select name="Kategorie" id="categoryName"></select>
-        <button class="addButton" id="categoryAdd">+</button>
+        <select name="Kategorie" id="categoryName" required></select>
+        <button type="button" class="addButton" id="categoryAdd" aria-label="Kategorie hinzufügen">+</button>
 
         <button id="submitBtn" type="submit">Item hinzufügen</button>
     </form>

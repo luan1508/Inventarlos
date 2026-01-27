@@ -4,23 +4,12 @@ import com.herbei.qr_inventory.model.Category;
 import com.herbei.qr_inventory.model.Item;
 import com.herbei.qr_inventory.model.ItemRequest;
 import com.herbei.qr_inventory.model.Location;
-import com.herbei.qr_inventory.repository.CategoryRepository;
-import com.herbei.qr_inventory.repository.ItemRepository;
-import com.herbei.qr_inventory.repository.LocationRepository;
-import com.herbei.qr_inventory.service.QrCodeService;
-import com.google.zxing.WriterException;
-import org.hibernate.annotations.Fetch;
-import org.springframework.http.MediaType;
+import com.herbei.qr_inventory.service.ItemService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Base64;
 
 @RestController
 @RequestMapping("/items")
@@ -29,175 +18,77 @@ public class ItemController
 {
     //#region Attribute
 
-    private final CategoryRepository categoryRepository;
-    private final LocationRepository locationRepository;
-    private final ItemRepository itemRepository;
-    private final QrCodeService qrCodeService;
+    private final ItemService itemService;
 
     //#endregion
 
     //#region Konstruktor
-    public ItemController(CategoryRepository categoryRepository, LocationRepository locationRepository, ItemRepository itemRepository, QrCodeService qrCodeService)
+    public ItemController(ItemService itemService)
     {
-        this.categoryRepository = categoryRepository;
-        this.locationRepository = locationRepository;
-        this.itemRepository = itemRepository;
-        this.qrCodeService = qrCodeService;
+        this.itemService = itemService;
     }
     //#endregion
 
     //#region MappingFunctions
     @PostMapping("/location")
-    public ResponseEntity<Location> createItem(@RequestBody Location location)
+    public ResponseEntity<Location> createLocation(@RequestBody Location location)
     {
-        Location _responeLocation = locationRepository.save(location);
-        return ResponseEntity.ok().body(_responeLocation);
+        return itemService.createLocation(location);
     }
 
     @PostMapping("/category")
-    public ResponseEntity<Category> createItem(@RequestBody Category category)
+    public ResponseEntity<Category> createCategory(@RequestBody Category category)
     {
-        Category _responseCategory = categoryRepository.save(category);
-        return ResponseEntity.ok().body(_responseCategory);
+        return itemService.createCategory(category);
     }
 
     @GetMapping("/location")
     public List<Location> getLocations() {
-        return locationRepository.findAll();
+        return itemService.getLocations();
     }
 
     @GetMapping("/category")
     public List<Category> getCategories() {
-        return categoryRepository.findAll();
+        return itemService.getCategories();
     }
 
     // CREATE
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest request)
+    public ResponseEntity<?> createItem(@RequestBody ItemRequest request)
     {
-        Location _locationResponse = locationRepository.findByLocationName(request.getLocationName()).orElse(null);
-        Category _categoryResponse = categoryRepository.findByCategoryName(request.getCategoryName()).orElse(null);
-
-        Item item = new Item();
-        item.setName(request.getName());
-        item.setBeschreibung(request.getBeschreibung());
-        item.setLocation(_locationResponse);
-        item.setCategory(_categoryResponse);
-
-        Item savedItem = itemRepository.save(item);
-
-        try
-        {
-            Path qrFolder = Path.of("qrcodes");
-            Files.createDirectories(qrFolder);
-
-            System.out.println("PATH: " + qrFolder);
-
-            String qrFilePath = qrFolder.resolve("item-" + savedItem.getId() + ".png").toString();
-
-            String qrText = "https://www.youtube.com/watch?v=xvFZjo5PgG0&list=RDxvFZjo5PgG0&start_radio=1"; //+ savedItem.getId();
-
-            qrCodeService.generateQRCodeImage(qrText, 250, 250, qrFilePath);
-
-            byte[] qrBytes = Files.readAllBytes(Path.of(qrFilePath));
-            String qrBase64 = Base64.getEncoder().encodeToString(qrBytes);
-
-            savedItem.setQrCode(qrFilePath);
-            itemRepository.save(savedItem);
-
-            ItemResponse response = new ItemResponse(savedItem, qrBase64);
-            return ResponseEntity.ok(response);
-
-        } catch (WriterException | IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+        return itemService.createItem(request);
     }
 
     // READ ALL
     @GetMapping
-    public List<Item> getAllItems() { return itemRepository.findAll(); }
+    public List<Item> getAllItems() { return itemService.getAllItems(); }
 
     // READ ONE
     @GetMapping("/{id}")
     public ResponseEntity<Item> getItemById(@PathVariable Long id)
     {
-        Optional<Item> item = itemRepository.findById(id);
-        return item.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return itemService.getItemById(id);
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody ItemRequest updatedItem)
+    public ResponseEntity<?> updateItem(@PathVariable Long id, @RequestBody ItemRequest updatedItem)
     {
-        return itemRepository.findById(id).map(item ->
-        {
-            Location _locationResponse = locationRepository.findByLocationName(updatedItem.getLocationName()).orElse(null);
-            Category _categoryResponse = categoryRepository.findByCategoryName(updatedItem.getCategoryName()).orElse(null);
-
-            item.setName(updatedItem.getName());
-            item.setBeschreibung(updatedItem.getBeschreibung());
-            item.setCategory(_categoryResponse);
-            item.setLocation(_locationResponse);
-            Item savedItem = itemRepository.save(item);
-            return ResponseEntity.ok(savedItem);
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+        return itemService.updateItem(id, updatedItem);
     }
 
     // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) throws IOException
     {
-        Optional<Item> itemOpt = itemRepository.findById(id);
-        if (itemOpt.isPresent())
-        {
-            Item item = itemOpt.get();
-            if (item.getQrCode() != null)
-            {
-                Files.deleteIfExists(Path.of(item.getQrCode()));
-            }
-            itemRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        else
-        {
-            return ResponseEntity.notFound().build();
-        }
+        return itemService.deleteItem(id);
     }
 
     // GET QR-CODE IMAGE
     @GetMapping("/{id}/qrcode")
     public ResponseEntity<byte[]> getQrCodeImage(@PathVariable Long id)
     {
-        Optional<Item> itemOpt = itemRepository.findById(id);
-        if (itemOpt.isEmpty())
-        {
-            return ResponseEntity.notFound().build();
-        }
-
-        Item item = itemOpt.get();
-        if (item.getQrCode() == null || item.getQrCode().isBlank())
-        {
-            return ResponseEntity.notFound().build();
-        }
-        try
-        {
-            byte[] qrBytes = Files.readAllBytes(Path.of(item.getQrCode()));
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_PNG)
-                    .body(qrBytes);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+        return itemService.getQrCodeImage(id);
     }
     //#endregion
-
-    // Hilfsklasse für Response mit Base64-Bild
-    public record ItemResponse(Item item, String qrImageBase64)
-    {
-        // ToDo
-    }
 }

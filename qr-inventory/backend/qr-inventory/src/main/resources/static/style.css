@@ -16,22 +16,7 @@ body
   color:#112;
 }
 
-select
-{
-    min-width: 160px;
-}
-
-h1{margin:0 0 12px 0;font-size:1.6rem}
-
-form#itemForm
-{
-  display:flex;
-  gap:8px;
-  margin-bottom:16px;
-  flex-wrap:wrap;
-}
-
-form input[type="text"]
+form input[type="text"], form select
 {
   padding:8px 10px;
   border:1px solid #ddd;
@@ -49,6 +34,9 @@ form button[type="submit"], .btn, .addButton
   border-radius:6px;
   cursor:pointer;
 }
+
+form button[type="submit"]{margin-left: 10px;}
+
 .btn.btn-delete{background:var(--danger)}
 .btn.btn-edit{background:#17a2b8}
 .btn.btn-cancel{background:#888;color:#fff}
@@ -68,6 +56,13 @@ form button[type="submit"], .btn, .addButton
 .items-table thead th{
   background:#fafafa;
   font-weight:600;
+}
+.items-table th.sortable{
+  user-select:none;
+  transition:background .12s ease;
+}
+.items-table th.sortable:hover{
+  background:#f0f0f0;
 }
 .actions-cell button{margin-right:6px}
 
@@ -108,6 +103,44 @@ form button[type="submit"], .btn, .addButton
   cursor:pointer;
 }
 .error{color:var(--danger)}
+
+/* simple dialog overlay */
+.dialog-overlay{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(1px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+  z-index:1300;
+}
+.dialog-overlay.open{opacity:1;pointer-events:auto}
+.dialog{
+  position:relative;
+  background:var(--card);
+  padding:20px 18px 16px 18px;
+  border-radius:12px;
+  width:min(420px,92vw);
+  max-height:90vh;
+  box-shadow:0 18px 50px rgba(0,0,0,0.28);
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  overflow:auto;
+  transform:translateY(12px) scale(.98);
+  opacity:0;
+  transition:transform .18s ease, opacity .18s ease;
+}
+.dialog-overlay.open .dialog{transform:translateY(0) scale(1);opacity:1}
+.dialog h3{margin:0;font-size:1.05rem}
+.dialog .dialog-actions{display:flex;gap:10px;justify-content:flex-end}
+.dialog input[type="text"]{width:100%;padding:10px 12px;border:1px solid #d5d9dd;border-radius:8px;background:#fdfdfd}
+.dialog .error-text{color:var(--danger);font-size:0.9rem;min-height:1.2em}
 /* responsive */
 @media (max-width:640px){
   form#itemForm{flex-direction:column}

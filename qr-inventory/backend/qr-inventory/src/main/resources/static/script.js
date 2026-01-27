@@ -8,18 +8,34 @@ document.addEventListener('DOMContentLoaded', () =>
     const standortInput = document.getElementById('locationName');
     const categoryInput = document.getElementById('categoryName');
     const itemsContainer = document.getElementById('itemsContainer');
+    const submitBtn=document.getElementById('submitBtn');
+    const locationAddBtn = document.getElementById('locationAdd');
+    const categoryAddBtn = document.getElementById('categoryAdd');
+
+    const addDialog = createAddDialog();
+    document.body.appendChild(addDialog.overlay);
 
     let editingId = null;
+    let sortField = null; // 'name', 'location', 'category'
+    let sortDirection = 'asc'; // 'asc' or 'desc'
     const cancelBtn = createCancelButton();
     form.appendChild(cancelBtn);
 
     const qrModal = createQrModal();
     document.body.appendChild(qrModal.overlay);
 
-    form.addEventListener('submit',
+    submitBtn.addEventListener('click',
     async (e) =>
     {
         e.preventDefault();
+
+        // Built-in HTML validation first
+        if (!form.checkValidity())
+        {
+            form.reportValidity();
+            return; // stop if required fields are not filled
+        }
+
         const payload =
         {
             name: nameInput.value.trim(),
@@ -27,6 +43,18 @@ document.addEventListener('DOMContentLoaded', () =>
             locationName: standortInput.value.trim(),
             categoryName: categoryInput.value.trim()
         };
+
+        // Extra trimmed checks to avoid whitespace-only values
+        const missing = [];
+        if (!payload.name) missing.push('Name');
+        if (!payload.locationName) missing.push('Standort');
+        if (!payload.categoryName) missing.push('Kategorie');
+        if (missing.length)
+        {
+            alert(`Bitte füllen Sie folgende Felder aus: ${missing.join(', ')}`);
+            return; // block request when inputs are invalid
+        }
+
         try
         {
             if (editingId)
@@ -43,7 +71,10 @@ document.addEventListener('DOMContentLoaded', () =>
         catch (err)
         {
             console.error(err);
-            alert('Fehler beim Speichern des Items.');
+            const suffix = (err.details && Array.isArray(err.details) && err.details.length)
+                ? `\nFehlende Felder: ${err.details.join(', ')}`
+                : '';
+            alert((err.message || 'Fehler beim Speichern des Items.') + suffix);
         }
     });
 
@@ -60,6 +91,18 @@ document.addEventListener('DOMContentLoaded', () =>
 
     fillSelects("location");
     fillSelects("category");
+
+    locationAddBtn?.addEventListener('click', async (e) =>
+    {
+        e.preventDefault();
+        addDialog.open('location');
+    });
+
+    categoryAddBtn?.addEventListener('click', async (e) =>
+    {
+        e.preventDefault();
+        addDialog.open('category');
+    });
 
     standortInput.addEventListener('click', function ()
     {
@@ -108,6 +151,116 @@ document.addEventListener('DOMContentLoaded', () =>
        }
    }
 
+    function ensureOption(selectEl, value)
+    {
+        if (!selectEl || !value) return;
+        const exists = Array.from(selectEl.options).some(o => o.value === value);
+        if (!exists)
+        {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = value;
+            selectEl.appendChild(option);
+        }
+        selectEl.value = value;
+    }
+
+    function createAddDialog()
+    {
+        const overlay = document.createElement('div');
+        overlay.className = 'dialog-overlay';
+        overlay.innerHTML = `
+            <div class="dialog">
+                <h3 class="dialog-title"></h3>
+                <input type="text" class="dialog-input" placeholder="Name" />
+                <div class="error-text"></div>
+                <div class="dialog-actions">
+                    <button type="button" class="btn btn-cancel dialog-cancel">Abbrechen</button>
+                    <button type="button" class="btn dialog-save">Hinzufügen</button>
+                </div>
+            </div>`;
+
+        const titleEl = overlay.querySelector('.dialog-title');
+        const inputEl = overlay.querySelector('.dialog-input');
+        const errorEl = overlay.querySelector('.error-text');
+        const cancelBtn = overlay.querySelector('.dialog-cancel');
+        const saveBtn = overlay.querySelector('.dialog-save');
+
+        let currentType = null;
+
+        function close()
+        {
+            overlay.classList.remove('open');
+            inputEl.value = '';
+            errorEl.textContent = '';
+            currentType = null;
+        }
+
+        overlay.addEventListener('click', (e) =>
+        {
+            if (e.target === overlay) close();
+        });
+        cancelBtn.addEventListener('click', close);
+
+        saveBtn.addEventListener('click', async () =>
+        {
+            if (!currentType) return;
+            const val = inputEl.value.trim();
+            if (!val)
+            {
+                errorEl.textContent = 'Bitte einen Namen eingeben.';
+                inputEl.focus();
+                return;
+            }
+
+            try
+            {
+                await createEntity(currentType, val);
+                const targetSelect = currentType === 'location' ? standortInput : categoryInput;
+                ensureOption(targetSelect, val);
+                close();
+            }
+            catch (err)
+            {
+                errorEl.textContent = err?.message || 'Fehler beim Anlegen.';
+            }
+        });
+
+        return {
+            overlay,
+            open: (type) =>
+            {
+                currentType = type;
+                const label = type === 'location' ? 'Standort' : 'Kategorie';
+                titleEl.textContent = `${label} hinzufügen`;
+                inputEl.placeholder = `${label}-Name`;
+                errorEl.textContent = '';
+                inputEl.value = '';
+                overlay.classList.add('open');
+                setTimeout(() => inputEl.focus(), 10);
+            }
+        };
+    }
+
+    async function createEntity(type, name)
+    {
+        const payload = { name };
+        const res = await fetch(`${API}/${type}`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json().catch(() => null);
+        if (!res.ok)
+        {
+            const msg = (data && data.message) ? data.message : 'Fehler beim Anlegen.';
+            const err = new Error(msg);
+            throw err;
+        }
+        return data;
+    }
+
     // functions
     async function fetchAndRender()
     {
@@ -133,21 +286,37 @@ document.addEventListener('DOMContentLoaded', () =>
             return;
         }
 
+        // Sort items if a field is selected
+        if (sortField)
+        {
+            items = sortItems([...items], sortField, sortDirection);
+        }
+
         const table = document.createElement('table');
         table.className = 'items-table';
 
         const thead = document.createElement('thead');
+        const nameSort = getSortIndicator('name');
+        const locationSort = getSortIndicator('location');
+        const categorySort = getSortIndicator('category');
         thead.innerHTML = `
             <tr>
                 <th>ID</th>
-                <th>Name</th>
+                <th class="sortable" data-field="name">Name ${nameSort}</th>
                 <th>Beschreibung</th>
-                <th>Standort</th>
-                <th>Kategorie</th>
+                <th class="sortable" data-field="location">Standort ${locationSort}</th>
+                <th class="sortable" data-field="category">Kategorie ${categorySort}</th>
                 <th>QR</th>
                 <th>Aktionen</th>
             </tr>`;
         table.appendChild(thead);
+
+        // Add click handlers to sortable headers
+        thead.querySelectorAll('.sortable').forEach(th =>
+        {
+            th.style.cursor = 'pointer';
+            th.addEventListener('click', () => handleSort(th.dataset.field));
+        });
 
         const tbody = document.createElement('tbody');
 
@@ -225,9 +394,16 @@ document.addEventListener('DOMContentLoaded', () =>
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        if (!res.ok) throw new Error('POST fehlgeschlagen');
-        // backend liefert eventuell ItemResponse oder Item; we ignore payload return and reload list
-        return res.json().catch(() => null);
+        const data = await res.json().catch(() => null);
+        if (!res.ok)
+        {
+            const msg = (data && data.message) ? data.message : 'POST fehlgeschlagen';
+            const err = new Error(msg);
+            if (data && data.missingFields) err.details = data.missingFields;
+            throw err;
+        }
+        // backend liefert eventuell ItemResponse oder Item
+        return data;
     }
 
     async function updateItem(id, payload)
@@ -238,8 +414,15 @@ document.addEventListener('DOMContentLoaded', () =>
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        if (!res.ok) throw new Error('PUT fehlgeschlagen');
-        return res.json().catch(() => null);
+        const data = await res.json().catch(() => null);
+        if (!res.ok)
+        {
+            const msg = (data && data.message) ? data.message : 'PUT fehlgeschlagen';
+            const err = new Error(msg);
+            if (data && data.missingFields) err.details = data.missingFields;
+            throw err;
+        }
+        return data;
     }
 
     async function deleteItemWithConfirm(id)
@@ -342,6 +525,55 @@ document.addEventListener('DOMContentLoaded', () =>
             .replaceAll('>', '&gt;')
             .replaceAll('"', '&quot;')
             .replaceAll("'", '&#039;');
+    }
+
+    function handleSort(field)
+    {
+        if (sortField === field)
+        {
+            // Toggle direction
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        }
+        else
+        {
+            sortField = field;
+            sortDirection = 'asc';
+        }
+        fetchAndRender();
+    }
+
+    function getSortIndicator(field)
+    {
+        if (sortField !== field) return '↕';
+        return sortDirection === 'asc' ? '↑' : '↓';
+    }
+
+    function sortItems(items, field, direction)
+    {
+        return items.sort((a, b) =>
+        {
+            let aVal, bVal;
+            if (field === 'name')
+            {
+                aVal = (a.name || '').toLowerCase();
+                bVal = (b.name || '').toLowerCase();
+            }
+            else if (field === 'location')
+            {
+                aVal = (a.location?.name || a.location?.lname || '').toLowerCase();
+                bVal = (b.location?.name || b.location?.lname || '').toLowerCase();
+            }
+            else if (field === 'category')
+            {
+                aVal = (a.category?.name || '').toLowerCase();
+                bVal = (b.category?.name || '').toLowerCase();
+            }
+            else return 0;
+
+            if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
     }
 
 });

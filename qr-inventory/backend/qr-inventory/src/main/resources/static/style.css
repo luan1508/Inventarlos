@@ -56,6 +56,13 @@ form button[type="submit"]{margin-left: 10px;}
   border-bottom: 1px solid #bfbfbf;
 }
 
+.items-table thead th:last-child{
+  background:#d7d7d7;
+  font-weight:600;
+  border-right: none;
+  border-bottom: 1px solid #bfbfbf;
+}
+
 .sortingArrow{
   margin-left:15px;
 }
@@ -66,6 +73,10 @@ form button[type="submit"]{margin-left: 10px;}
   text-align:left;
   vertical-align:middle;
   border-right: 1px solid var(--borderColor);
+}
+
+.items-table th, .items-table td:last-child{
+  border-right: none;
 }
 
 .items-table th.sortable{

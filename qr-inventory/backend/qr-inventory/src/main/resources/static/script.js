@@ -302,10 +302,10 @@ document.addEventListener('DOMContentLoaded', () =>
         thead.innerHTML = `
             <tr>
                 <th>ID</th>
-                <th class="sortable" data-field="name">Name ${nameSort}</th>
+                <th class="sortable" data-field="name"><span">Name</span><span class="sortingArrow">${nameSort}</span></th>
                 <th>Beschreibung</th>
-                <th class="sortable" data-field="location">Standort ${locationSort}</th>
-                <th class="sortable" data-field="category">Kategorie ${categorySort}</th>
+                <th class="sortable" data-field="location"><span>Standort</span><span class="sortingArrow">${locationSort}</span></th>
+                <th class="sortable" data-field="category"><span>Kategorie</span><span class="sortingArrow">${categorySort}</span></th>
                 <th>QR</th>
                 <th>Aktionen</th>
             </tr>`;

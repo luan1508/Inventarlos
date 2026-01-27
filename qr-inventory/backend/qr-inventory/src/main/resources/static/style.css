@@ -5,6 +5,7 @@
   --muted:#666;
   --accent:#0366d6;
   --danger:#d9534f;
+  --borderColor: #7a7a7a;
 }
 
 *{box-sizing:border-box}
@@ -47,23 +48,35 @@ form button[type="submit"]{margin-left: 10px;}
   background:var(--card);
   box-shadow:0 1px 2px rgba(0,0,0,0.04);
 }
+
+.items-table thead th{
+  background:#d7d7d7;
+  font-weight:600;
+  border-right: 1px solid var(--borderColor);
+  border-bottom: 1px solid #bfbfbf;
+}
+
+.sortingArrow{
+  margin-left:15px;
+}
+
 .items-table th, .items-table td{
   padding:10px 12px;
   border-bottom:1px solid #eee;
   text-align:left;
   vertical-align:middle;
+  border-right: 1px solid var(--borderColor);
 }
-.items-table thead th{
-  background:#fafafa;
-  font-weight:600;
-}
+
 .items-table th.sortable{
   user-select:none;
-  transition:background .12s ease;
+  transition: background .12s ease;
 }
+
 .items-table th.sortable:hover{
-  background:#f0f0f0;
+  background:#e2e2e2;
 }
+
 .actions-cell button{margin-right:6px}
 
 .qr-overlay{
@@ -78,6 +91,7 @@ form button[type="submit"]{margin-left: 10px;}
   transition:opacity .15s ease;
   z-index:1200;
 }
+
 .qr-overlay.open{opacity:1;pointer-events:auto}
 .qr-modal{
   background:var(--card);
@@ -91,6 +105,7 @@ form button[type="submit"]{margin-left: 10px;}
   gap:12px;
   align-items:center;
 }
+
 .qr-modal img{max-width:380px;max-height:70vh}
 .qr-close{
   position:absolute;
@@ -119,7 +134,9 @@ form button[type="submit"]{margin-left: 10px;}
   transition:opacity .18s ease;
   z-index:1300;
 }
+
 .dialog-overlay.open{opacity:1;pointer-events:auto}
+
 .dialog{
   position:relative;
   background:var(--card);
@@ -136,12 +153,14 @@ form button[type="submit"]{margin-left: 10px;}
   opacity:0;
   transition:transform .18s ease, opacity .18s ease;
 }
+
 .dialog-overlay.open .dialog{transform:translateY(0) scale(1);opacity:1}
 .dialog h3{margin:0;font-size:1.05rem}
 .dialog .dialog-actions{display:flex;gap:10px;justify-content:flex-end}
 .dialog input[type="text"]{width:100%;padding:10px 12px;border:1px solid #d5d9dd;border-radius:8px;background:#fdfdfd}
 .dialog .error-text{color:var(--danger);font-size:0.9rem;min-height:1.2em}
 /* responsive */
+
 @media (max-width:640px){
   form#itemForm{flex-direction:column}
   .items-table th, .items-table td{padding:8px}

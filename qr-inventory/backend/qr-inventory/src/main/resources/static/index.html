@@ -33,7 +33,23 @@
         <button id="submitBtn" type="submit">Item hinzufügen</button>
     </form>
 
-    <div id="itemsContainer" style="margin-top: 30px;"></div>
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button id="showNewestBtn" class="btn">Neuestes Item anzeigen</button>
+        <button id="showOldestBtn" class="btn">Ältestes Item anzeigen</button>
+    </div>
+
+    <div id="searchContainer" style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <label for="searchInput" style="font-weight: 600; color: #333; min-width: 80px;">Suche:</label>
+            <input type="text" id="searchInput" placeholder="Item-Name suchen..." style="flex: 1; padding: 10px 15px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <button id="searchBtn" class="btn" style="padding: 10px 24px;">Suchen</button>
+            <button id="clearSearchBtn" class="btn btn-cancel" style="padding: 10px 24px;">Zurücksetzen</button>
+            <button id="excelExportBtn" class="btn btn-excel" style="padding: 10px 24px;">Excel Export</button>
+        </div>
+        <div id="searchResultInfo" style="margin-top: 10px; font-size: 14px; color: #666;"></div>
+    </div>
+
+    <div id="itemsContainer" style="margin-top: 20px;"></div>
 
     <script src="script.js"></script>
 </body>

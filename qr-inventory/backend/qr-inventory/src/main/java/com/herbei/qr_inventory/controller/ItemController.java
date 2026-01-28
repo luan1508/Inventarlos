@@ -90,5 +90,33 @@ public class ItemController
     {
         return itemService.getQrCodeImage(id);
     }
+    
+    // GET NEWEST ITEM
+    @GetMapping("/newest")
+    public ResponseEntity<Item> getNewestItem()
+    {
+        return itemService.getNewestItem();
+    }
+    
+    // GET OLDEST ITEM
+    @GetMapping("/oldest")
+    public ResponseEntity<Item> getOldestItem()
+    {
+        return itemService.getOldestItem();
+    }
+    
+    // SEARCH ITEMS BY NAME
+    @GetMapping("/search")
+    public List<Item> searchItems(@RequestParam(required = false) String name)
+    {
+        return itemService.searchItemsByName(name);
+    }
+    
+    // EXPORT TO EXCEL
+    @GetMapping("/export/excel")
+    public ResponseEntity<byte[]> exportToExcel()
+    {
+        return itemService.exportToExcel();
+    }
     //#endregion
 }

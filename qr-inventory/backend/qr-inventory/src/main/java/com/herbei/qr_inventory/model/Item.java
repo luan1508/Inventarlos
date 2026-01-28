@@ -10,6 +10,15 @@ public class Item
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ITEMID;
     
+    @ManyToOne
+    @JoinColumn(name = "Category_ID", nullable = false)
+    private Category category_ID;
+
+    @ManyToOne
+    @JoinColumn(name = "Location_ID", nullable = false)
+    private Location location_ID;
+    
+    
     @Column(nullable = false)
     private String itemName;
 
@@ -19,13 +28,6 @@ public class Item
     @Column(nullable = true)
     private String itemQrCode;
 
-    @ManyToOne
-    @JoinColumn(name = "Category_ID", nullable = false)
-    private Category category_ID;
-
-    @ManyToOne
-    @JoinColumn(name = "Location_ID", nullable = false)
-    private Location location_ID;
     //#endregion
    
     //#region Konstruktor

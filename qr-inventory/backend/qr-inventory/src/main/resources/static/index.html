@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f5f5f5; border-bottom: 1px solid #ddd;">
+        <div>
+            <span id="user-info">Lade Benutzerinformationen...</span>
+        </div>
+        <div>
+            <form action="/auth/logout" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-logout">Abmelden</button>
+            </form>
+        </div>
+    </div>
+    
     <h1>QR-Inventar</h1>
 
     <form id="itemForm">

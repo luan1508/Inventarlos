@@ -41,6 +41,17 @@ form button[type="submit"]{margin-left: 10px;}
 .btn.btn-delete{background:var(--danger)}
 .btn.btn-edit{background:#17a2b8}
 .btn.btn-cancel{background:#888;color:#fff}
+.btn.btn-logout{background:#dc3545;color:#fff;padding:8px 16px;border:none;border-radius:6px;cursor:pointer}
+.btn.btn-logout:hover{background:#c82333}
+
+#header-bar {
+    margin: -24px -24px 20px -24px;
+}
+
+#user-info {
+    font-weight: 500;
+    color: #333;
+}
 
 .items-table{
   width:100%;

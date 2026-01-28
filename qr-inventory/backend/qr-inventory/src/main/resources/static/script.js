@@ -1,7 +1,49 @@
 const API = '/items';
 
+// Globale Variable für User-Rolle
+let currentUser = {
+    username: '',
+    isAdmin: false,
+    roles: []
+};
+
 document.addEventListener('DOMContentLoaded', () =>
 {
+    // Zuerst User-Info laden, dann restliche Initialisierung
+    loadUserInfo().then(() => {
+        initializeApp();
+    }).catch((err) => {
+        console.error('Fehler beim Laden der Benutzerinfo:', err);
+        // Wenn nicht eingeloggt, zur Login-Seite weiterleiten
+        window.location.href = '/login.html';
+    });
+});
+
+async function loadUserInfo() {
+    try {
+        const response = await fetch('/auth/user-info');
+        if (!response.ok) {
+            throw new Error('Nicht authentifiziert');
+        }
+        const userInfo = await response.json();
+        currentUser.username = userInfo.username;
+        currentUser.isAdmin = userInfo.isAdmin;
+        currentUser.roles = userInfo.roles;
+        
+        // Zeige Benutzerinfo im Header an
+        const userInfoElement = document.getElementById('user-info');
+        if (userInfoElement) {
+            const roleText = currentUser.isAdmin ? 'Administrator' : 'Benutzer';
+            userInfoElement.textContent = `Angemeldet als: ${currentUser.username} (${roleText})`;
+        }
+        
+        return userInfo;
+    } catch (error) {
+        throw error;
+    }
+}
+
+function initializeApp() {
     const form = document.getElementById('itemForm');
     const nameInput = document.getElementById('name');
     const beschreibungInput = document.getElementById('beschreibung');
@@ -11,6 +53,12 @@ document.addEventListener('DOMContentLoaded', () =>
     const submitBtn=document.getElementById('submitBtn');
     const locationAddBtn = document.getElementById('locationAdd');
     const categoryAddBtn = document.getElementById('categoryAdd');
+
+    
+    if(currentUser.isAdmin===false) {
+        locationAddBtn.style.display = 'none';
+        categoryAddBtn.style.display = 'none';
+    }
 
     const addDialog = createAddDialog();
     document.body.appendChild(addDialog.overlay);
@@ -346,17 +394,23 @@ document.addEventListener('DOMContentLoaded', () =>
             // Actions: Edit, Delete
             const actionsCell = tr.querySelector('.actions-cell');
 
-            const editBtn = document.createElement('button');
-            editBtn.textContent = 'Bearbeiten';
-            editBtn.className = 'btn btn-edit';
-            editBtn.addEventListener('click', () => startEdit(it));
-            actionsCell.appendChild(editBtn);
+            // Nur Admin kann bearbeiten und löschen
+            if (currentUser.isAdmin) {
+                const editBtn = document.createElement('button');
+                editBtn.textContent = 'Bearbeiten';
+                editBtn.className = 'btn btn-edit';
+                editBtn.addEventListener('click', () => startEdit(it));
+                actionsCell.appendChild(editBtn);
 
-            const delBtn = document.createElement('button');
-            delBtn.textContent = 'Löschen';
-            delBtn.className = 'btn btn-delete';
-            delBtn.addEventListener('click', () => deleteItemWithConfirm(it.id));
-            actionsCell.appendChild(delBtn);
+                const delBtn = document.createElement('button');
+                delBtn.textContent = 'Löschen';
+                delBtn.className = 'btn btn-delete';
+                delBtn.addEventListener('click', () => deleteItemWithConfirm(it.id));
+                actionsCell.appendChild(delBtn);
+            } else {
+                // User sieht nur einen Hinweis
+                actionsCell.innerHTML = '<span style="color: #999; font-size: 12px;">Keine Berechtigung</span>';
+            }
 
             tbody.appendChild(tr);
         }
@@ -367,6 +421,12 @@ document.addEventListener('DOMContentLoaded', () =>
 
     function startEdit(item)
     {
+        // Nur Admin darf bearbeiten
+        if (!currentUser.isAdmin) {
+            alert('Sie haben keine Berechtigung, Items zu bearbeiten.');
+            return;
+        }
+        
         editingId = item.id;
         nameInput.value = item.name || '';
         beschreibungInput.value = item.beschreibung || '';
@@ -427,6 +487,12 @@ document.addEventListener('DOMContentLoaded', () =>
 
     async function deleteItemWithConfirm(id)
     {
+        // Nur Admin darf löschen
+        if (!currentUser.isAdmin) {
+            alert('Sie haben keine Berechtigung, Items zu löschen.');
+            return;
+        }
+        
         if (!confirm('Item wirklich löschen?')) return;
         try
         {
@@ -576,4 +642,4 @@ document.addEventListener('DOMContentLoaded', () =>
         });
     }
 
-});
+}; // Ende von initializeApp()

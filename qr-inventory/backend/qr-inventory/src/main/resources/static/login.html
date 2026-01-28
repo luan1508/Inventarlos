@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR-Inventar - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .login-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .login-form input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .login-form button {
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .login-form button:hover {
+            background-color: #0056b3;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid #c3e6cb;
+            margin-bottom: 15px;
+        }
+        
+        .demo-credentials {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .demo-credentials h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #495057;
+        }
+        
+        .demo-credentials p {
+            margin: 5px 0;
+            color: #6c757d;
+        }
+        
+        .demo-credentials code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>QR-Inventar Login</h1>
+        
+        <div id="error-container"></div>
+        <div id="success-container"></div>
+        
+        <form class="login-form" action="/auth/login" method="post">
+            <input type="text" name="username" id="username" placeholder="Benutzername" required autofocus>
+            <input type="password" name="password" id="password" placeholder="Passwort" required>
+            <button type="submit">Anmelden</button>
+        </form>
+        
+        <div class="demo-credentials">
+            <h3>Demo-Zugangsdaten:</h3>
+            <p><strong>Administrator:</strong><br>
+               Benutzername: <code>admin</code><br>
+               Passwort: <code>admin123</code></p>
+            <p><strong>Standard-User:</strong><br>
+               Benutzername: <code>user</code><br>
+               Passwort: <code>user123</code></p>
+        </div>
+    </div>
+
+    <script>
+        // Zeige Fehler- oder Erfolgsmeldungen basierend auf URL-Parametern
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorContainer = document.getElementById('error-container');
+            const successContainer = document.getElementById('success-container');
+            
+            if (urlParams.get('error') === 'true') {
+                errorContainer.innerHTML = '<div class="error-message">Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.</div>';
+            }
+            
+            if (urlParams.get('logout') === 'true') {
+                successContainer.innerHTML = '<div class="success-message">Sie wurden erfolgreich abgemeldet.</div>';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -249,7 +249,7 @@ function initializeApp() {
     async function exportToExcel() {
         try {
             excelExportBtn.disabled = true;
-            excelExportBtn.textContent = 'Exportiere...';
+            excelExportBtn.textContent = '📊 Exportiere...';
             
             const res = await fetch(`${API}/export/excel`);
             
@@ -288,14 +288,14 @@ function initializeApp() {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
             
-            excelExportBtn.textContent = 'Excel Export';
+            excelExportBtn.textContent = '📊 Excel Export';
             excelExportBtn.disabled = false;
             
             alert('Excel-Datei wurde erfolgreich heruntergeladen!');
         } catch (err) {
             console.error(err);
             alert('Fehler beim Excel-Export: ' + err.message);
-            excelExportBtn.textContent = 'Excel Export';
+            excelExportBtn.textContent = '📊 Excel Export';
             excelExportBtn.disabled = false;
         }
     }

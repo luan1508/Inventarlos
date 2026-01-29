@@ -28,14 +28,17 @@ public class ItemService
     private final LocationRepository locationRepository;
     private final ItemRepository itemRepository;
     private final QrCodeService qrCodeService;
+    private final ExcelExportService excelExportService;
 
     public ItemService(CategoryRepository categoryRepository, LocationRepository locationRepository,
-                       ItemRepository itemRepository, QrCodeService qrCodeService)
+                       ItemRepository itemRepository, QrCodeService qrCodeService, 
+                       ExcelExportService excelExportService)
     {
         this.categoryRepository = categoryRepository;
         this.locationRepository = locationRepository;
         this.itemRepository = itemRepository;
         this.qrCodeService = qrCodeService;
+        this.excelExportService = excelExportService;
     }
 
     public ResponseEntity<Location> createLocation(Location location)
@@ -206,6 +209,48 @@ public class ItemService
         if (request.getLocationName() == null || request.getLocationName().isBlank()) missingFields.add("locationName");
         if (request.getCategoryName() == null || request.getCategoryName().isBlank()) missingFields.add("categoryName");
         return missingFields;
+    }
+
+    public ResponseEntity<Item> getNewestItem()
+    {
+        Optional<Item> newestItem = itemRepository.findNewestItem();
+        return newestItem.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    public ResponseEntity<Item> getOldestItem()
+    {
+        Optional<Item> oldestItem = itemRepository.findOldestItem();
+        return oldestItem.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    public List<Item> searchItemsByName(String searchTerm)
+    {
+        if (searchTerm == null || searchTerm.trim().isEmpty())
+        {
+            return itemRepository.findAll();
+        }
+        return itemRepository.searchByName(searchTerm.trim());
+    }
+
+    public ResponseEntity<byte[]> exportToExcel()
+    {
+        try
+        {
+            List<Item> items = itemRepository.findAll();
+            byte[] excelFile = excelExportService.createExcelFile(items);
+            String fileName = excelExportService.generateFileName();
+            
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
+                    .header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    .body(excelFile);
+        }
+        catch (IOException e)
+        {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     public record ItemResponse(Item item, String qrImageBase64) {}

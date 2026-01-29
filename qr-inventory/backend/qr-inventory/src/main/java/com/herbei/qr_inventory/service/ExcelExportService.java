@@ -23,7 +23,7 @@ public class ExcelExportService
     public byte[] createExcelFile(List<Item> items) throws IOException 
     {
         try (Workbook workbook = new XSSFWorkbook();
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) 
+            ByteArrayOutputStream out = new ByteArrayOutputStream()) 
         {
             Sheet sheet = workbook.createSheet("Items");
             

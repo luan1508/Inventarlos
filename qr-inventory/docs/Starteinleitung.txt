@@ -1,0 +1,6 @@
+Wie starte ich die Inventar Applikation?
+
+Zuerst in QrInventarApplication.java rein gehen und diese starten
+-> Maven dependencies umbedingt laden!
+
+dann localhost:8080 eingeben und anmelden, alles sehr simple :)
